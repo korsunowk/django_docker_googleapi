@@ -1,0 +1,12 @@
+Django
+psycopg2
+djangorestframework
+markdown
+django-filter
+oauth2client
+google-api-python-client
+oauth2_provider
+django-cors-headers
+django-oauth-toolkit
+google-api-python-client
+simplejson

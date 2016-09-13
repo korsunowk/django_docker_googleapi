@@ -1,0 +1,90 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html ng-app="emailApp">
+<head>
+	<script src="{% static 'bower_components/angular/angular.min.js' %}"></script>
+	<script src="{% static 'app.js' %}"></script>
+
+	<meta charset="UTF-8">
+	<title>Email list</title>
+</head>
+<body ng-controller="emailController as email">
+{#	<button ng-click="email.Refresh()">Refresh email list</button>#}
+    <a href="/logout">Logout</a>
+    <div ng-repeat="e in email.emailList">
+		<h2>Message #&#123;&#123; $index + 1 &#125;&#125;</h2>
+        <email-item email='e'></email-item>
+	</div>
+
+    <div ng-show="!email.emailList.length > 0">
+        <div class="loader">Load</div>
+    </div>
+
+</body>
+<style>
+    .loader {
+  font-size: 10px;
+  margin: 50px auto;
+  text-indent: -9999em;
+  width: 11em;
+  height: 11em;
+  border-radius: 50%;
+  background: #000000;
+  background: -moz-linear-gradient(left, #000000 10%, rgba(0,0,0, 0) 42%);
+  background: -webkit-linear-gradient(left, #000000 10%, rgba(0,0,0, 0) 42%);
+  background: -o-linear-gradient(left, #000000 10%, rgba(0,0,0, 0) 42%);
+  background: -ms-linear-gradient(left, #000000 10%, rgba(0,0,0, 0) 42%);
+  background: linear-gradient(to right, #000000 10%, rgba(0,0,0, 0) 42%);
+  position: absolute;
+  -webkit-animation: load3 1.4s infinite linear;
+  animation: load3 1.4s infinite linear;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+}
+.loader:before {
+  width: 50%;
+  height: 50%;
+  background: #000000;
+  border-radius: 100% 0 0 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  content: '';
+}
+.loader:after {
+  background: #ffffff;
+  width: 75%;
+  height: 75%;
+  border-radius: 50%;
+  content: '';
+  margin: auto;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  right: 0;
+}
+@-webkit-keyframes load3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load3 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+</style>
+
+</html>
