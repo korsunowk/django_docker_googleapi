@@ -1,4 +1,4 @@
-from django.shortcuts import render_to_response, redirect, HttpResponseRedirect, HttpResponse
+from django.shortcuts import render_to_response, redirect, HttpResponseRedirect
 from django.views.decorators.csrf import csrf_exempt
 from oauth2client import client
 from django.contrib.auth import login, logout
