@@ -18,7 +18,7 @@ flow = client.OAuth2WebServerFlow(client_id='890978714352-nnv2maasf1om2tnrttl25s
 
 def main(request):
     if request.user.is_authenticated():
-        return render_to_response('email.html')
+        return render_to_response('email.html', get_all_emails)
     else:
         return render_to_response('login.html')
 
@@ -65,6 +65,29 @@ def auth_return(request):
     return HttpResponseRedirect("/")
 
 
+def parse_message(request_id, response, exception):
+    to_message, from_message, subject_message, message_body, date_message = '', '', '', '', ''
+    global all_data
+    for result_mess in response['payload']['headers']:
+            if result_mess['name'] == 'Date':
+                date_message = result_mess['value']
+            elif result_mess['name'] == 'To':
+                to_message = result_mess['value']
+            elif result_mess['name'] == 'Subject':
+                subject_message = result_mess['value']
+            elif result_mess['name'] == 'From':
+                from_message = result_mess['value']
+    all_data['messages'].append(
+        {
+            'To': to_message,
+            'From': from_message,
+            'Date': date_message,
+            'Subject': subject_message,
+            'Message': message_body
+        }
+    )
+
+
 @login_required
 def get_all_emails(request):
     credential = CredentialsModel.objects.get(
@@ -74,33 +97,15 @@ def get_all_emails(request):
     service = discovery.build('gmail', 'v1', http=http, )
 
     all_data = dict()
+    global all_data
     all_data['user_info'] = request.user.username
     all_data['messages'] = []
-    to_message, from_message, subject_message, message_body, date_message = '', '', '', '', ''
 
     messages = service.users().messages().list(userId='me', maxResults=100).execute()
 
+    batch = service.new_batch_http_request()
     for message in messages['messages']:
-        result_message = service.users().messages().get(userId='me', id=message['id']).execute()
-        message_body = result_message['snippet']
-        for result_mess in result_message['payload']['headers']:
-            if result_mess['name'] == 'Date':
-                date_message = result_mess['value']
-            elif result_mess['name'] == 'To':
-                to_message = result_mess['value']
-            elif result_mess['name'] == 'Subject':
-                subject_message = result_mess['value']
-            elif result_mess['name'] == 'From':
-                from_message = result_mess['value']
-
-        all_data['messages'].append(
-            {
-                'To': to_message,
-                'From': from_message,
-                'Date': date_message,
-                'Subject': subject_message,
-                'Message': message_body
-            }
-        )
+        batch.add(service.users().messages().get(userId='me', id=message['id']), callback=parse_message)
+    batch.execute(http=http)
 
     return JsonResponse(all_data)
