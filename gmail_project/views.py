@@ -8,11 +8,21 @@ from apiclient import discovery
 from django.contrib.auth.models import User
 from gmail_project.models import CredentialsModel
 from django.http import JsonResponse
+import time
 
+start_time = time.time()
 
 flow = client.OAuth2WebServerFlow(client_id='890978714352-nnv2maasf1om2tnrttl25s3hdrgq9p4s.apps.googleusercontent.com',
                                   client_secret='sKjNKJRTw7Nt7TFw3ZIyyOJp',
-                                  scope=['https://mail.google.com/', 'https://www.googleapis.com/auth/plus.me'],
+                                  scope=['https://www.googleapis.com/auth/drive',
+                                         'https://mail.google.com/',
+                                         'https://www.googleapis.com/auth/drive.appdata',
+                                         'https://www.googleapis.com/auth/drive.file',
+                                         'https://www.googleapis.com/auth/drive.metadata',
+                                         'https://www.googleapis.com/auth/drive.metadata.readonly',
+                                         'https://www.googleapis.com/auth/drive.photos.readonly',
+                                         'https://www.googleapis.com/auth/drive.readonly',
+                                         'https://www.googleapis.com/auth/plus.me'],
                                   redirect_uri='http://127.0.0.1:8000/oauth2callback/')
 
 
@@ -88,13 +98,18 @@ def parse_message(request_id, response, exception):
     )
 
 
+def parse_file(request_id, response, exeption):
+    # print(request_id, response, exeption)
+    print('_____________________________________________________________')
+
+
 @login_required
 def get_all_emails(request):
     credential = CredentialsModel.objects.get(
         id=request.user
     ).credential
     http = credential.authorize(httplib2.Http())
-    service = discovery.build('gmail', 'v1', http=http, )
+    service = discovery.build('gmail', 'v1', http=http)
 
     all_data = dict()
     global all_data
@@ -109,3 +124,16 @@ def get_all_emails(request):
     batch.execute(http=http)
 
     return JsonResponse(all_data)
+
+
+@login_required
+def get_all_files(request):
+    credential = CredentialsModel.objects.get(
+        id=request.user
+    ).credential
+    http = credential.authorize(httplib2.Http())
+    service = discovery.build('drive', 'v2', http=http)
+
+    files = service.files().list().execute()
+
+    return JsonResponse(files, safe=False)
