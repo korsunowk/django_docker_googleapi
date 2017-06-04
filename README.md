@@ -1,2 +1,2 @@
-# djnago_docker_googleapi
+# django_docker_googleapi
 Приложение для вывода email сообщений из gmail.
