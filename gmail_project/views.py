@@ -29,8 +29,7 @@ flow = client.OAuth2WebServerFlow(client_id='890978714352-nnv2maasf1om2tnrttl25s
 def main(request):
     if request.user.is_authenticated():
         return render_to_response('email.html', get_all_emails)
-    else:
-        return render_to_response('login.html')
+    return render_to_response('login.html')
 
 
 @csrf_exempt
@@ -46,7 +45,6 @@ def logout_(request):
 
 
 def auth_return(request):
-
     credential = flow.step2_exchange(request.GET['code'])
     http = credential.authorize(httplib2.Http())
     user_info_service = discovery.build(
@@ -120,7 +118,9 @@ def get_all_emails(request):
 
     batch = service.new_batch_http_request()
     for message in messages['messages']:
-        batch.add(service.users().messages().get(userId='me', id=message['id']), callback=parse_message)
+        batch.add(service.users().messages().get(userId='me', 
+                                                 id=message['id']), 
+                  callback=parse_message)
     batch.execute(http=http)
 
     return JsonResponse(all_data)
