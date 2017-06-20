@@ -22,9 +22,10 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'logout/$', views.logout_),
     url(r'index/$', views.index),
-    
+
     url(r'^o/', include('oauth2_provider.urls', namespace='oauth2_provider')),
     url(r'oauth2callback/$', views.auth_return),
+
     url(r'get_emails/$', views.get_all_emails),
     url(r'get_files/$', views.get_all_files)
 ]
