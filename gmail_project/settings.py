@@ -129,6 +129,7 @@ USE_TZ = True
 TEMPLATE_DIRS = [
     os.path.join(os.path.dirname(__file__), 'templates')
 ]
+
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
