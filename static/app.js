@@ -20,7 +20,6 @@ emailApp.controller('emailController', function($scope, emailFactory) {
 	});
 
 	email.Refresh = function() {
-
 		emailFactory.getEmailList().success(function(data) {
 			email.emailList = data.messages;
 		});
